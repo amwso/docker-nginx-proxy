@@ -1,0 +1,9 @@
+server {
+
+    server_name "";
+
+    location / {
+        retuen 400;
+    }
+}
+

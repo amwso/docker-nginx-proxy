@@ -16,7 +16,7 @@ RUN \
  sed -i 's/UTC=yes/UTC=no/' /etc/default/rcS ; \
  apt-get -y install \
  curl wget \
- supervisor
+ supervisor anacron 
 
 
 RUN \
@@ -25,3 +25,16 @@ RUN \
  curl -sSL http://nginx.org/keys/nginx_signing.key | apt-key add - ; \
  apt-get update ; \
  apt-get -y install nginx
+
+
+COPY ./sbin /root/sbin
+COPY ./template /root/template
+
+RUN mv /etc/supervisor/supervisord.conf /etc/supervisor/supervisord.conf.default ; \
+ cp /root/template/conf/supervisord.conf /etc/supervisor/supervisord.conf ; \
+ cp /root/template/conf/crontab /etc/crontab ; \
+ cp /root/template/conf/cron.d/anacron /etc/cron.d/anacron
+
+RUN \
+ groupadd -g 5000 -r user_web ; \
+ useradd -l -M -r  -s /usr/sbin/nologin -u 5000 -g 5000 user_web
