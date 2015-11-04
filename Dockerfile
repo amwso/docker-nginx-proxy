@@ -38,3 +38,7 @@ RUN mv /etc/supervisor/supervisord.conf /etc/supervisor/supervisord.conf.default
 RUN \
  groupadd -g 5000 -r user_web ; \
  useradd -l -M -r  -s /usr/sbin/nologin -u 5000 -g 5000 user_web
+
+EXPOSE 80
+
+CMD ["/bin/bash","/root/sbin/init.sh"]
