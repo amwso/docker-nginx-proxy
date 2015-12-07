@@ -24,14 +24,14 @@ check_dir () {
 }
 
 setup_upsteam () {
-        if [ "x$NGINX_UPSTREAM" == "x" ] ; then
+        if [ "x$NGINX_UPSTREAM" == "x" ] && [ ! -f $CONF_PATH/nginx/nginx_upstream.conf ] ; then
                 echo "no upstream, exit."
 		exit 1
 	elif [[ ! $NGINX_UPSTREAM =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(:[0-9]+)?$ ]] ; then
 		echo "bad upstream, exit."
 		exit 1
         else
-		echo "upstream http_backend { server $NGINX_UPSTREAM; keepalive 16; }" > $CONF_PATH/nginx/nginx_upstream.conf
+		echo "upstream http_backend { server $NGINX_UPSTREAM; }" > $CONF_PATH/nginx/nginx_upstream.conf
         fi
 }
 
