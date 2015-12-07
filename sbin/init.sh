@@ -35,8 +35,21 @@ setup_upsteam () {
         fi
 }
 
+setup_ssl () {
+	if [ ! -d $CONF_PATH/nginx/cert ] ; then
+		mkdir -p $CONF_PATH/nginx/cert
+		openssl req -new -newkey rsa:2048 -nodes -out $CONF_PATH/nginx/cert/server.csr -keyout $CONF_PATH/nginx/cert/server.key -subj "/C=CN/ST=State/L=Location/O=DigiCert, Inc./OU=IT/CN=*.example.com"
+		openssl x509 -req -days 3650 -in $CONF_PATH/nginx/cert/server.csr -signkey $CONF_PATH/nginx/cert/server.key -out $CONF_PATH/nginx/cert/server.crt
+		\rm $CONF_PATH/nginx/cert/server.csr
+	fi
+	if [ -f $CONF_PATH/nginx/nginx_site_ssl.stop ] ; then
+		\mv $CONF_PATH/nginx/nginx_site_ssl.stop $CONF_PATH/nginx/nginx_site_ssl.conf
+	fi
+}
+
 check_dir
 setup_upsteam
+[ ! "x$NGINX_ENABLE_SSL" == "x" ] && setup_ssl
 
 # load crontab
 crontab $CONF_PATH/crontab.root
