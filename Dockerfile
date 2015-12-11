@@ -10,7 +10,6 @@ RUN \
  HISTSIZE=0 ; \
  echo 'deb http://archive.ubuntu.com/ubuntu/ trusty multiverse' >> /etc/apt/sources.list ; \
  echo 'deb-src http://archive.ubuntu.com/ubuntu/ trusty multiverse' >> /etc/apt/sources.list ; \
- sed -i 's/archive.ubuntu.com/cn.archive.ubuntu.com/g' /etc/apt/sources.list ; \
  apt-get update ; \
  apt-get -y upgrade ; \
  cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime ; \
