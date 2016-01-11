@@ -13,7 +13,7 @@ NGINX_CACHE_PATH=$DATA_PATH/var/cache/nginx
 check_dir () {
 	# build dir
 	[[ ! -d $LOG_FILE_PATH/supervisor ]] && mkdir -p $LOG_FILE_PATH/supervisor
-	[[ ! -d $LOG_FILE_PATH/nginx ]] && mkdir -p $LOG_FILE_PATH/nginx
+	[[ ! -d $LOG_FILE_PATH/nginx ]] && mkdir -p $LOG_FILE_PATH/nginx && chown user_web:user_web $LOG_FILE_PATH/nginx
 	[[ ! -d $ARACRON_PATH ]] && mkdir -p $ARACRON_PATH
 	[[ ! -d $LOGROTATE_PATH ]] && mkdir -p $LOGROTATE_PATH
 	[[ ! -d $NGINX_CACHE_PATH ]] && mkdir -p $NGINX_CACHE_PATH
@@ -41,20 +41,18 @@ setup_upsteam () {
 }
 
 setup_ssl () {
-	if [ ! -d $CONF_PATH/nginx/cert ] ; then
-		mkdir -p $CONF_PATH/nginx/cert
-		openssl req -new -newkey rsa:2048 -nodes -out $CONF_PATH/nginx/cert/server.csr -keyout $CONF_PATH/nginx/cert/server.key -subj "/C=CN/ST=State/L=Location/O=DigiCert, Inc./OU=IT/CN=*.example.com"
-		openssl x509 -req -days 3650 -in $CONF_PATH/nginx/cert/server.csr -signkey $CONF_PATH/nginx/cert/server.key -out $CONF_PATH/nginx/cert/server.crt
-		\rm $CONF_PATH/nginx/cert/server.csr
-	fi
-	if [ -f $CONF_PATH/nginx/nginx_site_ssl.stop ] ; then
-		\mv $CONF_PATH/nginx/nginx_site_ssl.stop $CONF_PATH/nginx/nginx_site_ssl.conf
+	CERT_PATH=$CONF_PATH/nginx/cert
+	if [ ! -d $CERT_PATH ] ; then
+		mkdir -p $CERT_PATH
+		openssl req -new -newkey rsa:2048 -nodes -out $CERT_PATH/server.csr -keyout $CERT_PATH/server.key -subj "/C=CN/ST=State/L=Location/O=DigiCert, Inc./OU=IT/CN=*.example.com"
+		openssl x509 -req -days 3650 -in $CERT_PATH/server.csr -signkey $CERT_PATH/server.key -out $CERT_PATH/server.crt
+		\rm $CERT_PATH/server.csr
 	fi
 }
 
 check_dir
-setup_upsteam
-[ ! "x$NGINX_ENABLE_SSL" == "x" ] && setup_ssl
+#setup_upsteam
+setup_ssl
 
 # load crontab
 crontab $CONF_PATH/crontab.root
